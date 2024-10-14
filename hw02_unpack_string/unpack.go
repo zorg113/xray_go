@@ -16,14 +16,18 @@ const (
 	Symbol
 )
 
-type stateMashine struct {
-	state States
-	prev  rune            // запоминаемый символ
-	out   strings.Builder // распакованная сторка
+type writer interface {
+	WriteRune(s rune) (int, error)
 }
 
-func newSateMashine() *stateMashine {
-	return &stateMashine{state: Empty}
+type stateMashine struct {
+	state States
+	prev  rune   // запоминаемый символ
+	out   writer // распакованная сторка
+}
+
+func newSateMashine(out_ writer) *stateMashine {
+	return &stateMashine{state: Empty, prev: 0, out: out_}
 }
 
 // поверка входного символа на число и распаковка
@@ -79,7 +83,8 @@ func (m *stateMashine) end() error {
 // распаковка строк
 
 func Unpack(s string) (string, error) {
-	extract := newSateMashine()
+	builder := strings.Builder{}
+	extract := newSateMashine(&builder)
 	for _, val := range s {
 		if err := extract.checkDigit(val); err != nil {
 			return "", err
@@ -91,5 +96,5 @@ func Unpack(s string) (string, error) {
 	if err := extract.end(); err != nil {
 		return "", err
 	}
-	return extract.out.String(), nil
+	return builder.String(), nil
 }
