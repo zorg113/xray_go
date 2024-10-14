@@ -23,11 +23,11 @@ type writer interface {
 type stateMashine struct {
 	state States
 	prev  rune   // запоминаемый символ
-	out   writer // распакованная сторка
+	out   writer // распакованная сторка (интерфейс)
 }
 
-func newSateMashine(out_ writer) *stateMashine {
-	return &stateMashine{state: Empty, prev: 0, out: out_}
+func newSateMashine(outIn writer) *stateMashine {
+	return &stateMashine{state: Empty, prev: 0, out: outIn}
 }
 
 // поверка входного символа на число и распаковка

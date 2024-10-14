@@ -11,10 +11,9 @@ import (
 
 var ErrWriteRune = errors.New("error write rune")
 
-type stringsMock struct {
-}
+type stringsMock struct{}
 
-func (sm stringsMock) WriteRune(s rune) (int, error) {
+func (sm stringsMock) WriteRune(_ rune) (int, error) {
 	return 0, ErrWriteRune
 }
 
@@ -61,11 +60,10 @@ func TestStateMashineErrorAtoi(t *testing.T) {
 	builder := strings.Builder{}
 	state := newSateMashine(&builder)
 	state.state = Symbol
-	var r rune = '৩'
+	r := rune('৩')
 	t.Run(string(r), func(t *testing.T) {
 		err := state.checkDigit(r)
 		require.Truef(t, errors.Is(err, strconv.ErrSyntax), "actual error %q", err)
-
 	})
 }
 
@@ -73,7 +71,7 @@ func TestStateMashineErrorWriteRune(t *testing.T) {
 	builder := stringsMock{}
 	state := newSateMashine(&builder)
 	state.state = Symbol
-	var r rune = '9'
+	r := rune('9')
 	t.Run(string(r), func(t *testing.T) {
 		err := state.checkDigit(r)
 		require.Truef(t, errors.Is(err, ErrWriteRune), "actual checkDigit WriteRune error %q", err)
