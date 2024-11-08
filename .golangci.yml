@@ -64,3 +64,5 @@ linters:
     - unparam
     - unused
     - whitespace
+  disable:
+    - depguard
