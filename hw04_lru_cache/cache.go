@@ -15,6 +15,7 @@ type lruCache struct {
 }
 
 // создание кэша
+
 func NewCache(capacity int) Cache {
 	return &lruCache{
 		capacity: capacity,
@@ -24,6 +25,7 @@ func NewCache(capacity int) Cache {
 }
 
 // Реализация интерфейса добавления элемента в кэш
+
 func (c *lruCache) Set(key Key, value interface{}) bool {
 	elem, ok := c.items[key]
 	if ok {
@@ -47,6 +49,7 @@ func (c *lruCache) Set(key Key, value interface{}) bool {
 }
 
 // Извлечение элемента из кэша
+
 func (c *lruCache) Get(key Key) (interface{}, bool) {
 	elem, ok := c.items[key]
 	if !ok {
@@ -54,10 +57,17 @@ func (c *lruCache) Get(key Key) (interface{}, bool) {
 	}
 	c.queue.MoveToFront(elem)
 	return elem.Value, true
-
 }
 
 // очистка кэша
-func (c *lruCache) Clear() {
 
+func (c *lruCache) Clear() {
+	for k := range c.items {
+		delete(c.items, k)
+	}
+	l := c.queue.Front()
+	for l != nil {
+		c.queue.Remove(l)
+		l = c.queue.Front()
+	}
 }

@@ -24,26 +24,31 @@ type list struct {
 }
 
 // создание списка
+
 func NewList() List {
 	return &list{0, nil, nil}
 }
 
 // длина списка
+
 func (l list) Len() int {
 	return l.len
 }
 
 // первый элемент списка
+
 func (l list) Front() *ListItem {
 	return l.elFront
 }
 
 // последний элемент списка
+
 func (l list) Back() *ListItem {
 	return l.elBack
 }
 
 // добавлеие элемннта в начало списка
+
 func (l *list) PushFront(v interface{}) *ListItem {
 	elNew := ListItem{Value: v, Prev: nil, Next: l.elFront}
 	if l.len == 0 {
@@ -57,6 +62,7 @@ func (l *list) PushFront(v interface{}) *ListItem {
 }
 
 // добавление элмента в конец списка
+
 func (l *list) PushBack(v interface{}) *ListItem {
 	elNew := ListItem{Value: v, Prev: l.elBack, Next: nil}
 	if l.len == 0 {
@@ -71,6 +77,7 @@ func (l *list) PushBack(v interface{}) *ListItem {
 }
 
 // удаление элемента из списка
+
 func (l *list) Remove(i *ListItem) {
 	if i == nil {
 		return
@@ -93,6 +100,7 @@ func (l *list) Remove(i *ListItem) {
 }
 
 // пермещение элемнта в начало списка
+
 func (l *list) MoveToFront(i *ListItem) {
 	if i.Prev == nil {
 		return
