@@ -6,7 +6,6 @@ type Cache interface {
 	Set(key Key, value interface{}) bool
 	Get(key Key) (interface{}, bool)
 	Clear()
-	// GetKeysQeue() [5]string
 }
 
 type lruCache struct {
@@ -15,6 +14,7 @@ type lruCache struct {
 	items    map[Key]*ListItem
 }
 
+// создание кэша
 func NewCache(capacity int) Cache {
 	return &lruCache{
 		capacity: capacity,
@@ -23,6 +23,7 @@ func NewCache(capacity int) Cache {
 	}
 }
 
+// Реализация интерфейса добавления элемента в кэш
 func (c *lruCache) Set(key Key, value interface{}) bool {
 	elem, ok := c.items[key]
 	if ok {
@@ -45,6 +46,7 @@ func (c *lruCache) Set(key Key, value interface{}) bool {
 	return false
 }
 
+// Извлечение элемента из кэша
 func (c *lruCache) Get(key Key) (interface{}, bool) {
 	elem, ok := c.items[key]
 	if !ok {
@@ -55,20 +57,7 @@ func (c *lruCache) Get(key Key) (interface{}, bool) {
 
 }
 
+// очистка кэша
 func (c *lruCache) Clear() {
 
 }
-
-// func (l *lruCache) GetKeysQeue() [5]string {
-// 	el := l.queue.Front()
-// 	data := [5]string{}
-// 	i := 0
-// 	for el.Next != nil {
-// 		val, ok := el.Key.(string)
-// 		if ok {
-// 			data[i] = val
-// 			i++
-// 		}
-// 	}
-// 	return data
-// }

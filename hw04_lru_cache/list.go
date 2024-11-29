@@ -19,27 +19,31 @@ type ListItem struct {
 
 type list struct {
 	len     int
-	elFront *ListItem
-	elBack  *ListItem
-	// Place your code here.
+	elFront *ListItem // указатель на первый элемент
+	elBack  *ListItem // указатель на последний элемент
 }
 
+// создание списка
 func NewList() List {
 	return &list{0, nil, nil}
 }
 
+// длина списка
 func (l list) Len() int {
 	return l.len
 }
 
+// первый элемент списка
 func (l list) Front() *ListItem {
 	return l.elFront
 }
 
+// последний элемент списка
 func (l list) Back() *ListItem {
 	return l.elBack
 }
 
+// добавлеие элемннта в начало списка
 func (l *list) PushFront(v interface{}) *ListItem {
 	elNew := ListItem{Value: v, Prev: nil, Next: l.elFront}
 	if l.len == 0 {
@@ -47,25 +51,26 @@ func (l *list) PushFront(v interface{}) *ListItem {
 	} else {
 		l.elFront.Prev = &elNew
 	}
-	l.len += 1
+	l.len++
 	l.elFront = &elNew
 	return &elNew
 }
 
+// добавление элмента в конец списка
 func (l *list) PushBack(v interface{}) *ListItem {
 	elNew := ListItem{Value: v, Prev: l.elBack, Next: nil}
 	if l.len == 0 {
 		l.elFront = &elNew
 		l.elBack = &elNew
-		l.len += 1 
-		return &elNew
+	} else {
+		l.elBack.Next = &elNew
+		l.elBack = &elNew
 	}
-	l.len += 1
-	l.elBack.Next = &elNew
-	l.elBack = &elNew
+	l.len++
 	return &elNew
 }
 
+// удаление элемента из списка
 func (l *list) Remove(i *ListItem) {
 	if i == nil {
 		return
@@ -84,9 +89,10 @@ func (l *list) Remove(i *ListItem) {
 	}
 	i.Next = nil
 	i.Prev = nil
-	l.len -= 1
+	l.len--
 }
 
+// пермещение элемнта в начало списка
 func (l *list) MoveToFront(i *ListItem) {
 	if i.Prev == nil {
 		return
