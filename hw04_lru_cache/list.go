@@ -44,6 +44,8 @@ func (l *list) PushFront(v interface{}) *ListItem {
 	elNew := ListItem{Value: v, Prev: nil, Next: l.elFront}
 	if l.len == 0 {
 		l.elBack = &elNew
+	} else {
+		l.elFront.Prev = &elNew
 	}
 	l.len += 1
 	l.elFront = &elNew
@@ -51,14 +53,17 @@ func (l *list) PushFront(v interface{}) *ListItem {
 }
 
 func (l *list) PushBack(v interface{}) *ListItem {
-	elNew := &ListItem{Value: v, Prev: l.elBack, Next: nil}
+	elNew := ListItem{Value: v, Prev: l.elBack, Next: nil}
 	if l.len == 0 {
-		l.elFront = elNew
+		l.elFront = &elNew
+		l.elBack = &elNew
+		l.len += 1 
+		return &elNew
 	}
 	l.len += 1
-	l.elBack.Next = elNew
-	l.elBack = elNew
-	return elNew
+	l.elBack.Next = &elNew
+	l.elBack = &elNew
+	return &elNew
 }
 
 func (l *list) Remove(i *ListItem) {
@@ -92,6 +97,7 @@ func (l *list) MoveToFront(i *ListItem) {
 		next.Prev = prev
 	}
 	prev.Next = next
+	l.elBack = prev
 	i.Prev = nil
 	i.Next = l.elFront
 	l.elFront = i
