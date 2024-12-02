@@ -51,13 +51,14 @@ func (l list) Back() *ListItem {
 
 func (l *list) PushFront(v interface{}) *ListItem {
 	elNew := ListItem{Value: v, Prev: nil, Next: l.elFront}
-	if l.len == 0 {
+	if l.elBack == nil {
 		l.elBack = &elNew
-	} else {
+	}
+	if l.elFront != nil {
 		l.elFront.Prev = &elNew
 	}
-	l.len++
 	l.elFront = &elNew
+	l.len++
 	return &elNew
 }
 
@@ -65,13 +66,13 @@ func (l *list) PushFront(v interface{}) *ListItem {
 
 func (l *list) PushBack(v interface{}) *ListItem {
 	elNew := ListItem{Value: v, Prev: l.elBack, Next: nil}
-	if l.len == 0 {
-		l.elFront = &elNew
-		l.elBack = &elNew
-	} else {
+	if l.elBack != nil {
 		l.elBack.Next = &elNew
-		l.elBack = &elNew
 	}
+	if l.elFront == nil {
+		l.elFront = &elNew
+	}
+	l.elBack = &elNew
 	l.len++
 	return &elNew
 }
@@ -82,20 +83,26 @@ func (l *list) Remove(i *ListItem) {
 	if i == nil {
 		return
 	}
-	prev := i.Prev
-	next := i.Next
-	if prev == nil {
-		l.elFront = next
-	} else {
-		prev.Next = next
+	if i.Prev == nil && i.Next == nil {
+		l.elBack, l.elFront = nil, nil
 	}
-	if next == nil {
-		l.elBack = prev
-	} else {
-		next.Prev = prev
+	if i.Prev == nil && i.Next != nil {
+		l.elFront = i.Next
+		i.Next.Prev = nil
+		i.Prev, i.Next = nil, nil
 	}
-	i.Next = nil
-	i.Prev = nil
+	if i.Prev != nil && i.Next == nil {
+		i.Prev.Next = nil
+		l.elBack = i.Prev
+		i.Prev, i.Next = nil, nil
+	}
+	if i.Prev != nil && i.Next != nil {
+		prev, next := i.Prev, i.Next
+		i.Prev.Next = next
+		i.Next.Prev = prev
+		i.Prev, i.Next = nil, nil
+	}
+	i = nil
 	l.len--
 }
 
