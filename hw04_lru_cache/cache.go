@@ -71,12 +71,6 @@ func (c *lruCache) Get(key Key) (interface{}, bool) {
 func (c *lruCache) Clear() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	for k := range c.items {
-		delete(c.items, k)
-	}
-	l := c.queue.Front()
-	for l != nil {
-		c.queue.Remove(l)
-		l = c.queue.Front()
-	}
+	c.queue = NewList()
+	c.items = make(map[Key]*ListItem, c.capacity)
 }
