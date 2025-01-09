@@ -5,8 +5,10 @@ import (
 	"sync"
 )
 
-var ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
-var ErrErrorsNoWorkers = errors.New("errors limit exceeded")
+var (
+	ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
+	ErrErrorsNoWorkers     = errors.New("errors limit exceeded")
+)
 
 type Result struct {
 	err error
