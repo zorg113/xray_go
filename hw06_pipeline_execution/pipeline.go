@@ -13,17 +13,28 @@ func terminate(in In, done In, stage Stage) Out {
 	go func() {
 		defer close(out)
 		for {
-			if in == nil || done == nil {
+			if in == nil {
 				return
 			}
-			select {
-			case <-done:
-				return
-			case val, ok := <-in:
-				if !ok {
+			if done != nil {
+				select {
+				case <-done:
 					return
+				case val, ok := <-in:
+					if !ok {
+						return
+					}
+					out <- val
 				}
-				out <- val
+			} else {
+				select {
+				case val, ok := <-in:
+					if !ok {
+						return
+					}
+					out <- val
+				default:
+				}
 			}
 		}
 	}()
