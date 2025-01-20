@@ -13,7 +13,7 @@ func terminate(in In, done In, stage Stage) Out {
 	go func() {
 		defer close(out)
 		for {
-			if in == nil {
+			if in == nil || done == nil {
 				return
 			}
 			select {
