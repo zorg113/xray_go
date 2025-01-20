@@ -20,6 +20,7 @@ func (r Result) Err() error {
 	return r.err
 }
 
+// Push tasks 
 func pushTasks(taskCh chan<- Task, tasks []Task, doneCh <-chan struct{}) {
 	defer close(taskCh)
 	for _, task := range tasks {
@@ -31,6 +32,7 @@ func pushTasks(taskCh chan<- Task, tasks []Task, doneCh <-chan struct{}) {
 	}
 }
 
+// Run worker 
 func runWorker(taskCh <-chan Task, resCh chan<- Result, doneCh <-chan struct{}) {
 	for {
 		task, ok := <-taskCh
@@ -46,6 +48,7 @@ func runWorker(taskCh <-chan Task, resCh chan<- Result, doneCh <-chan struct{}) 
 	}
 }
 
+// Run workers 
 func runWorkers(count int, taskCh <-chan Task, resCh chan<- Result, doneCh <-chan struct{}) {
 	defer close(resCh)
 	wg := sync.WaitGroup{}
