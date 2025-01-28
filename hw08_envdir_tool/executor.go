@@ -2,10 +2,8 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 const (
@@ -21,22 +19,14 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	command, args := cmd[0], cmd[1:]
 	execCmd := exec.Command(command, args...)
 	execCmd.Stdin, execCmd.Stdout, execCmd.Stderr = os.Stdin, os.Stdout, os.Stderr
-	for _, e := range os.Environ() {
-		pair := strings.SplitN(e, "=", 2)		
-		for val := range env.Strings() {
-			curr :=  strings.SplitN(val, "=", 2)		
-			if pair[0] == curr[0] {
-	           
-				
-				
-
-
-
-				
-			}
+	for i := range env {
+		if env[i].NeedRemove {
+			os.Unsetenv(i)
+		} else {
+			os.Setenv(i, env[i].Value)
 		}
-		fmt.Println(pair)
-	}	
+	}
+
 	if err := execCmd.Run(); err != nil {
 		var exitErr *exec.ExitError
 		if errors.As(err, &exitErr) {
