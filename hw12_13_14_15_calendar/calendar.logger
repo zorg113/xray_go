@@ -1,0 +1,2 @@
+time="2025-02-18T13:19:04+03:00" level=info msg="calendar is running..."
+time="2025-02-18T13:20:43+03:00" level=info msg="127.0.0.1:60722 GET /hi HTTP/1.1 200 882ns curl/8.9.1"
