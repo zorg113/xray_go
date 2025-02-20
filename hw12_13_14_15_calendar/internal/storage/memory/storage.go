@@ -7,17 +7,19 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/storage"
 	"github.com/sirupsen/logrus"
+	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/storage"
 )
 
 type Storage struct {
-	mu     sync.RWMutex //nolint:unused
+	mu     sync.RWMutex
 	events map[string]*storage.Event
 }
 
 func New() *Storage {
-	return &Storage{}
+	return &Storage{
+		events: make(map[string]*storage.Event),
+	}
 }
 
 func (s *Storage) CreateEvent(e storage.Event) error {
@@ -32,6 +34,7 @@ func (s *Storage) CreateEvent(e storage.Event) error {
 	s.events[e.ID] = &e
 	return nil
 }
+
 func (s *Storage) UpdateEvent(e storage.Event) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -68,7 +71,7 @@ func (s *Storage) GetEvents(startData time.Time, endData time.Time) ([]storage.E
 
 	var events []storage.Event
 	for _, event := range s.events {
-		if event.StartData.Second() >= startData.Second() && event.EndData.Second() <= endData.Second() {
+		if event.StartData.Before(endData) && event.EndData.After(startData) {
 			events = append(events, *event)
 		}
 	}

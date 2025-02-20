@@ -4,11 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/storage"
 	"github.com/pkg/errors"
+	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/storage"
 )
 
 type Row struct {
@@ -39,12 +38,12 @@ func New(ctx context.Context, user, passwrd, host, name string, port uint64) (*S
 	return &Storage{db: db}, nil
 }
 
-func (s *Storage) Connect(ctx context.Context) error {
+func (s *Storage) Connect(_ context.Context) error {
 	// TODO
 	return nil
 }
 
-func (s *Storage) Close(ctx context.Context) error {
+func (s *Storage) Close(_ context.Context) error {
 	// TODO
 	return nil
 }
@@ -120,8 +119,15 @@ func (s *Storage) GetEvents(startData time.Time, endData time.Time) ([]Row, erro
 	var row Row
 	var rows []Row
 	for events.Next() {
-		if err := events.Scan(&row.ID, &row.Title, &row.StartDate, &row.EndDate, &row.Decsription, &row.OwnerID, &row.RemindIn); err != nil {
-			log.Fatal(err)
+		if err := events.Scan(
+			&row.ID,
+			&row.Title,
+			&row.StartDate,
+			&row.EndDate,
+			&row.Decsription,
+			&row.OwnerID,
+			&row.RemindIn); err != nil {
+			return nil, err
 		}
 		rows = append(rows, row)
 	}

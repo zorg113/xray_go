@@ -1,10 +1,9 @@
 package app
 
 import (
-	"context"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/storage"
+	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/storage"
 )
 
 type App struct {
@@ -33,10 +32,12 @@ func New(logger Logger, storage Storage) *App {
 	}
 }
 
-func (a *App) CreateEvent(ctx context.Context, id, title string) error {
-	// TODO
+func (a *App) CreateEvent(e storage.Event) error {
+	if err := a.storage.CreateEvent(e); err != nil {
+		a.logger.Error(err.Error())
+		return err
+	}
 	return nil
-	// return a.storage.CreateEvent(storage.Event{ID: id, Title: title})
 }
 
 // TODO

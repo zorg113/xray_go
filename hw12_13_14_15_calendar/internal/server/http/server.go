@@ -6,15 +6,18 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/logger"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/logger"
 )
 
+type Application interface { // TODO
+}
 type Server struct {
 	Address string
 	server  *http.Server
 	logger  logger.Logger
+	app     Application
 }
 
 // type Logger interface {
@@ -24,13 +27,11 @@ type Server struct {
 // 	Debug(msg string) // TODO
 // }
 
-type Application interface { // TODO
-}
-
 func NewServer(host, port string, log logger.Logger, app Application) *Server {
 	return &Server{
 		Address: net.JoinHostPort(host, port),
 		logger:  log,
+		app:     app,
 	}
 }
 
@@ -49,10 +50,8 @@ func (s *Server) Start(ctx context.Context) error {
 		return errors.Wrap(err, "start server error")
 	}
 
-	select {
-	case <-ctx.Done():
-		return nil
-	}
+	<-ctx.Done()
+	return nil
 }
 
 func (s *Server) Stop(ctx context.Context) error {
@@ -65,7 +64,7 @@ func (s *Server) Stop(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) helloWorld(w http.ResponseWriter, r *http.Request) {
+func (s *Server) helloWorld(w http.ResponseWriter, _ *http.Request) {
 	_, _ = w.Write([]byte("Hello World!"))
 }
 
