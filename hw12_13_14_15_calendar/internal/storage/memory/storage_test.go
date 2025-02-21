@@ -8,8 +8,10 @@ import (
 	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/storage"
 )
 
+//nolint:all
 func TestStorage(t *testing.T) {
 	t.Run("use storage", func(t *testing.T) {
+
 		data1 := storage.Event{
 			ID:          "ABCD",
 			Title:       "ToDo: title",
