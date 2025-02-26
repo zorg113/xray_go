@@ -2,6 +2,50 @@ syntax = "proto3";
 
 package event;
 
-message Event {
-    // TODO
+option go_package = "pkg/calendar;calendar_pb"
+
+import "google/protobuf/timestamp.proto"; 
+
+service Calendar {
+    rpc CreateEvent (CreateEventRequest) returns (CreateEventResponse) {}
+    rpc UpdateEvent (UpdateEventRequest) returns (UpdateEventResponse) {}
+    rpc GetEvents (GetEventsRequest) returns (GetEventsResponse) {}
+    rpc DeleteEvent(DeleteEventsRequest) returns (DeleteEventsResponse) {}
 }
+
+message Event {
+    uint64 id                            = 1;
+    string title                         = 2;
+    google.protobuf.Timespamp start_date = 3;
+    google.protobuf.Timespamp end_date   = 4;
+    string description                   = 5;
+    uint64 owner_id                      = 6;
+    string remind_in                     = 7;
+}
+
+message CreateEventRequest {
+    Event event = 1;
+}
+
+message CreateEventResponse { }
+
+message UpdateEventRequest { 
+    Event event = 1; 
+}
+
+message UpdateEventResponse {}
+
+message GetEventsRequest {
+  google.protobuf.Timespamp start_date = 1;
+  google.protobuf.Timespamp end_date   = 2;
+}
+
+message GetEventsResponse {
+    repeated Event event =1;
+}
+
+message DeleteEventRequest { 
+    Event event = 1; 
+}
+
+message DeleteEventsResponse {}

@@ -34,10 +34,34 @@ func New(logger Logger, storage Storage) *App {
 
 func (a *App) CreateEvent(e storage.Event) error {
 	if err := a.storage.CreateEvent(e); err != nil {
-		a.logger.Error(err.Error())
+		a.logger.Error("cann't create event")
 		return err
 	}
 	return nil
 }
 
-// TODO
+func (a *App) UpdateEvent(e storage.Event) error {
+	if err := a.storage.UpdateEvent(e); err != nil {
+		a.logger.Error("can't update event")
+		return err
+	}
+	return nil
+}
+
+func (a *App) DeleteEvent(e storage.Event) error {
+	if err := a.storage.DeleteEvent(e); err != nil {
+		a.logger.Error("can't delete event")
+		return err
+	}
+	return nil
+}
+
+func (a *App) GetEvents(startDate, endDate time.Time) ([]storage.Event, error) {
+	var events []storage.Event
+	var err error
+	if events, err = a.storage.GetEvents(startDate, endDate); err != nil {
+		a.logger.Error("can't delete event")
+		return nil, err
+	}
+	return events, nil
+}
