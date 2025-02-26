@@ -38,14 +38,20 @@ func New(ctx context.Context, user, passwrd, host, name string, port uint64) (*S
 	return &Storage{db: db}, nil
 }
 
-func (s *Storage) Connect(_ context.Context) error {
-	// TODO
+func (s *Storage) Connect(ctx context.Context) error {
+	_, err := s.db.Conn(ctx)
+	if err != nil {
+		return err
+	}
+	err = s.db.PingContext(ctx)
+	if err != nil {
+		return errors.Wrap(err, "connot ping context")
+	}
 	return nil
 }
 
 func (s *Storage) Close(_ context.Context) error {
-	// TODO
-	return nil
+	return s.db.Close()
 }
 
 func (s *Storage) NewEvent(e storage.Event) error {

@@ -6,6 +6,9 @@ path ="./calendar.logger"
 host = "localhost"
 port = "8080"
 
+[storage]
+type = "memory"
+
 [db]
 user = "test"
 password = "test"

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/app"
+	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/config"
 	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/logger"
 	internalhttp "github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/server/http"
 	memorystorage "github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/storage/memory"
@@ -29,7 +30,7 @@ func main() {
 		return
 	}
 
-	config, err := NewConfig(configFile)
+	config, err := config.NewConfig(configFile)
 	if err != nil {
 		log.Fatalf("can't get config: %v", err)
 	}
@@ -37,7 +38,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("can't start logger: %v", err)
 	}
-
 	storage := memorystorage.New()
 	calendar := app.New(logg, storage)
 
