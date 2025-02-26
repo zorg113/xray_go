@@ -27,7 +27,7 @@ func (s *Storage) CreateEvent(e storage.Event) error {
 	defer s.mu.Unlock()
 	if s.events[e.ID] != nil {
 		var msg strings.Builder
-		fmt.Fprintf(&msg, "evant %s already exist", e.ID)
+		fmt.Fprintf(&msg, "evant %d already exist", e.ID)
 		logrus.Info(msg)
 		return errors.New("event already exist")
 	}
@@ -41,7 +41,7 @@ func (s *Storage) UpdateEvent(e storage.Event) error {
 
 	if s.events[e.ID] == nil {
 		var msg strings.Builder
-		fmt.Fprintf(&msg, "event %s not found", e.ID)
+		fmt.Fprintf(&msg, "event %d not found", e.ID)
 		logrus.Info(msg)
 		return errors.New("event not found")
 	}
@@ -56,7 +56,7 @@ func (s *Storage) DeleteEvent(e storage.Event) error {
 
 	if s.events[e.ID] == nil {
 		var msg strings.Builder
-		fmt.Fprintf(&msg, "event %s not found", e.ID)
+		fmt.Fprintf(&msg, "event %d not found", e.ID)
 		logrus.Info(msg)
 		return errors.New("event not found")
 	}
