@@ -13,12 +13,12 @@ import (
 
 type Storage struct {
 	mu     sync.RWMutex
-	events map[string]*storage.Event
+	events map[int64]*storage.Event
 }
 
 func New() *Storage {
 	return &Storage{
-		events: make(map[string]*storage.Event),
+		events: make(map[int64]*storage.Event),
 	}
 }
 
@@ -71,7 +71,7 @@ func (s *Storage) GetEvents(startData time.Time, endData time.Time) ([]storage.E
 
 	var events []storage.Event
 	for _, event := range s.events {
-		if event.StartData.Before(endData) && event.EndData.After(startData) {
+		if event.StartDate.Before(endData) && event.EndDate.After(startData) {
 			events = append(events, *event)
 		}
 	}

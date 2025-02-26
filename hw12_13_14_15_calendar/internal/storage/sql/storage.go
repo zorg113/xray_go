@@ -7,25 +7,21 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/config"
 	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/storage"
 )
-
-type Row struct {
-	ID          int64
-	Title       string
-	StartDate   time.Time
-	EndDate     time.Time
-	Decsription string
-	OwnerID     int64
-	RemindIn    int64
-}
 
 type Storage struct {
 	db *sql.DB
 }
 
-func New(ctx context.Context, user, passwrd, host, name string, port uint64) (*Storage, error) {
-	config := fmt.Sprintf("postgres://%s:%s@%s:%v/%s?sslmode=disable", user, passwrd, host, port, name)
+func New(ctx context.Context, conf config.DBConf) (*Storage, error) {
+	config := fmt.Sprintf("postgres://%s:%s@%s:%v/%s?sslmode=disable",
+		conf.User,
+		conf.Password,
+		conf.Host,
+		conf.Port,
+		conf.DbName)
 	db, err := sql.Open("postgres", config)
 	if err != nil {
 		return nil, fmt.Errorf("cannot connect db: %w", err)
@@ -54,13 +50,13 @@ func (s *Storage) Close(_ context.Context) error {
 	return s.db.Close()
 }
 
-func (s *Storage) NewEvent(e storage.Event) error {
+func (s *Storage) CreateEvent(e storage.Event) error {
 	_, err := s.db.Exec(
 		`INSERT INTO event (title, start_date, end_date, description, owner_id, remind_in)`+
 			` VALUES $1, $2, $3, $4, $5, $6 RETURNING id`,
 		e.Title,
-		e.StartData,
-		e.EndData,
+		e.StartDate,
+		e.EndDate,
 		e.Description,
 		e.OwnerID,
 		e.RemindIn,
@@ -79,8 +75,8 @@ func (s *Storage) UpdateEvent(e storage.Event) error {
 			`$1, $2, $3, $4, $5, $6`+
 			`) WHERE id = $7`,
 		e.Title,
-		e.StartData,
-		e.EndData,
+		e.StartDate,
+		e.EndDate,
 		e.Description,
 		e.OwnerID,
 		e.RemindIn,
@@ -103,7 +99,7 @@ func (s *Storage) DeleteEvent(e storage.Event) error {
 	return nil
 }
 
-func (s *Storage) GetEvents(startData time.Time, endData time.Time) ([]Row, error) {
+func (s *Storage) GetEvents(startData time.Time, endData time.Time) ([]storage.Event, error) {
 	events, err := s.db.Query(
 		`SELECT id, 
        			title, 
@@ -122,15 +118,15 @@ func (s *Storage) GetEvents(startData time.Time, endData time.Time) ([]Row, erro
 	}
 	defer events.Close()
 
-	var row Row
-	var rows []Row
+	var row storage.Event
+	var rows []storage.Event
 	for events.Next() {
 		if err := events.Scan(
 			&row.ID,
 			&row.Title,
 			&row.StartDate,
 			&row.EndDate,
-			&row.Decsription,
+			&row.Description,
 			&row.OwnerID,
 			&row.RemindIn); err != nil {
 			return nil, err

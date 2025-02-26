@@ -14,6 +14,7 @@ import (
 	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/logger"
 	internalhttp "github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/server/http"
 	memorystorage "github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/storage/memory"
+	sqlstorage "github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/storage/sql"
 )
 
 var configFile string
@@ -38,7 +39,20 @@ func main() {
 	if err != nil {
 		log.Fatalf("can't start logger: %v", err)
 	}
-	storage := memorystorage.New()
+
+	var storage app.Storage
+
+	if config.Storage.Type == "DB" {
+		storage, err = sqlstorage.New(context.Background(), config.Storage.Database)
+		if err != nil {
+			log.Fatalf("can't start logger: %v", err)
+		}
+	}
+
+	if config.Storage.Type == "memory" {
+		storage = memorystorage.New()
+	}
+
 	calendar := app.New(logg, storage)
 
 	server := internalhttp.NewServer(

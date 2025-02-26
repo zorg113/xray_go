@@ -3,10 +3,10 @@ package storage
 import "time"
 
 type Event struct {
-	ID          string
+	ID          int64
 	Title       string
-	StartData   time.Time
-	EndData     time.Time
+	StartDate   time.Time
+	EndDate     time.Time
 	Description string
 	OwnerID     string
 	RemindIn    string
