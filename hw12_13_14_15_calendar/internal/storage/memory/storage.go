@@ -13,12 +13,12 @@ import (
 
 type Storage struct {
 	mu     sync.RWMutex
-	events map[int64]*storage.Event
+	events map[uint64]*storage.Event
 }
 
 func New() *Storage {
 	return &Storage{
-		events: make(map[int64]*storage.Event),
+		events: make(map[uint64]*storage.Event),
 	}
 }
 

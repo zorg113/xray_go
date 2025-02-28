@@ -21,7 +21,7 @@ func New(ctx context.Context, conf config.DBConf) (*Storage, error) {
 		conf.Password,
 		conf.Host,
 		conf.Port,
-		conf.DbName)
+		conf.DBName)
 	db, err := sql.Open("postgres", config)
 	if err != nil {
 		return nil, fmt.Errorf("cannot connect db: %w", err)

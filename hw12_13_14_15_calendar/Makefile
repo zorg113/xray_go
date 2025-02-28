@@ -39,7 +39,7 @@ lint: install-lint-deps
 
 generate:
 	mkdir -p pkg/calendar	
-	protoc --proto_path=$(GOPATH)/pkg --go_out=:. --go-grpc_out=:. $(PROTOPATH)/EventService.proto 
+	protoc  -I/usr/include -I. --go_out=:. --go-grpc_out=:. api/EventService.proto  
 
 
 .PHONY: build run build-img run-img version test lint generate

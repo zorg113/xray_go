@@ -66,7 +66,7 @@ func (s *Server) helloWorld(w http.ResponseWriter, _ *http.Request) {
 	_, _ = w.Write([]byte("Hello World!"))
 }
 
-func (s *Server) createEvent(w http.ResponseWriter, r *http.Request) { //nolint:dupl
+func (s *Server) createEvent(w http.ResponseWriter, r *http.Request) {
 	var event storage.Event
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	if err := json.NewDecoder(r.Body).Decode(&event); err != nil {
@@ -103,8 +103,7 @@ func (s *Server) updateEvent(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		s.logger.Error("cannot decode to struct" + err.Error())
 		if _, err := w.Write([]byte("cannot decode to struct")); err != nil {
-			s.logger.Error("cannot write to reply" + err.Error())
-			return
+			s.logger.Error("cannot write to reply" + err.Error()) //nolintlin:gci
 		}
 		return
 	}
@@ -112,8 +111,7 @@ func (s *Server) updateEvent(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		s.logger.Error("cannot update event" + err.Error())
 		if _, err := w.Write([]byte("cannot update event")); err != nil {
-			s.logger.Error("cannot write to reply" + err.Error())
-			return
+			s.logger.Error("cannot write to reply" + err.Error()) //nolintlin:gci
 		}
 		return
 	}
@@ -131,8 +129,7 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		s.logger.Error("cannot decode to struct" + err.Error())
 		if _, err := w.Write([]byte("cannot decode to struct")); err != nil {
-			s.logger.Error("cannot write to reply" + err.Error())
-			return
+			s.logger.Error("cannot write to reply" + err.Error()) //nolintlin:gci
 		}
 		return
 	}
@@ -142,7 +139,6 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 		s.logger.Error("cannot get events" + err.Error())
 		if _, err := w.Write([]byte("cannot get events")); err != nil {
 			s.logger.Error("cannot write to reply" + err.Error())
-			return
 		}
 		return
 	}
@@ -151,7 +147,6 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		if _, err := w.Write([]byte("events not found")); err != nil {
 			s.logger.Error("cannot write to reply" + err.Error())
-			return
 		}
 		return
 	}
@@ -162,7 +157,6 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 		s.logger.Error("cannot marshal events" + err.Error())
 		if _, err := w.Write([]byte("cannot marshal events")); err != nil {
 			s.logger.Error("cannot write to reply" + err.Error())
-			return
 		}
 		return
 	}
@@ -182,7 +176,6 @@ func (s *Server) deleteEvent(w http.ResponseWriter, r *http.Request) {
 		s.logger.Error("cannot decode to struct" + err.Error())
 		if _, err := w.Write([]byte("cannot decode to struct")); err != nil {
 			s.logger.Error("cannot write to reply" + err.Error())
-			return
 		}
 		return
 	}
@@ -191,7 +184,6 @@ func (s *Server) deleteEvent(w http.ResponseWriter, r *http.Request) {
 		s.logger.Error("cannot delete event" + err.Error())
 		if _, err := w.Write([]byte("cannot delete event")); err != nil {
 			s.logger.Error("cannot write to reply" + err.Error())
-			return
 		}
 		return
 	}

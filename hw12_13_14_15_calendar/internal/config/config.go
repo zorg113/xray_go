@@ -35,7 +35,7 @@ type DBConf struct {
 	Password string
 	Host     string
 	Port     uint64
-	DbName   string
+	DBName   string
 }
 
 func NewConfig(path string) (Config, error) {
