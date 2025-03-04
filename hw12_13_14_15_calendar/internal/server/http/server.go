@@ -96,23 +96,23 @@ func (s *Server) createEvent(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *Server) handleError(w http.ResponseWriter, _ *http.Request, msg string, err error) {
+	w.WriteHeader(http.StatusInternalServerError)
+	s.logger.Error(msg + err.Error())
+	if _, err := w.Write([]byte("msg")); err != nil {
+		s.logger.Error("cannot write to reply" + err.Error()) //nolintlin:gci
+	}
+}
+
 func (s *Server) updateEvent(w http.ResponseWriter, r *http.Request) {
 	var event storage.Event
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	if err := json.NewDecoder(r.Body).Decode(&event); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		s.logger.Error("cannot decode to struct" + err.Error())
-		if _, err := w.Write([]byte("cannot decode to struct")); err != nil {
-			s.logger.Error("cannot write to reply" + err.Error()) //nolintlin:gci
-		}
+		s.handleError(w, r, "cannot decode to struct", err)
 		return
 	}
 	if err := s.app.UpdateEvent(event); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		s.logger.Error("cannot update event" + err.Error())
-		if _, err := w.Write([]byte("cannot update event")); err != nil {
-			s.logger.Error("cannot write to reply" + err.Error()) //nolintlin:gci
-		}
+		s.handleError(w, r, "cannot update event", err)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -126,20 +126,12 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 	var event storage.Event
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	if err := json.NewDecoder(r.Body).Decode(&event); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		s.logger.Error("cannot decode to struct" + err.Error())
-		if _, err := w.Write([]byte("cannot decode to struct")); err != nil {
-			s.logger.Error("cannot write to reply" + err.Error()) //nolintlin:gci
-		}
+		s.handleError(w, r, "cannot decode to struct", err)
 		return
 	}
 	events, err := s.app.GetEvents(event.StartDate, event.EndDate)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		s.logger.Error("cannot get events" + err.Error())
-		if _, err := w.Write([]byte("cannot get events")); err != nil {
-			s.logger.Error("cannot write to reply" + err.Error())
-		}
+		s.handleError(w, r, "cannot get events", err)
 		return
 	}
 
@@ -153,11 +145,7 @@ func (s *Server) getEvents(w http.ResponseWriter, r *http.Request) {
 
 	result, err := json.Marshal(events)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		s.logger.Error("cannot marshal events" + err.Error())
-		if _, err := w.Write([]byte("cannot marshal events")); err != nil {
-			s.logger.Error("cannot write to reply" + err.Error())
-		}
+		s.handleError(w, r, "cannot marshal events", err)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
