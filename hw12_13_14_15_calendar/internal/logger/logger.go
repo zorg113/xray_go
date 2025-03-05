@@ -17,7 +17,7 @@ func New(level string, path string) (*Logger, error) {
 	if err != nil {
 		return nil, fmt.Errorf("cannot parse level: %w", err)
 	}
-	file, err := os.Open(path) // File(path, os.O_APPEND | os.O_CREATE | os.O_RDWR, 0666)
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		fmt.Printf("cannot open file: %v", err)
 	}

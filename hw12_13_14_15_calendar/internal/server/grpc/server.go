@@ -19,8 +19,8 @@ type Server struct {
 	app    *app.App
 }
 
-func NewServer(log *logger.Logger, app *app.App, address string) (*Server, error) {
-	listener, err := net.Listen("tcp", address)
+func NewServer(log *logger.Logger, app *app.App, address string, port string) (*Server, error) {
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", address, port))
 	if err != nil {
 		return nil, fmt.Errorf("start listen error: %w", err)
 	}
@@ -36,9 +36,11 @@ func NewServer(log *logger.Logger, app *app.App, address string) (*Server, error
 }
 
 func (s *Server) Start() error {
+	s.l.Info("start grpc server")
 	if err := s.server.Serve(s.lis); err != nil {
 		return fmt.Errorf("start server error: %w", err)
 	}
+	s.l.Info("stop grpc server")
 	return nil
 }
 

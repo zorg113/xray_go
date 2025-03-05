@@ -10,9 +10,10 @@ import (
 // Организация конфига в main принуждает нас сужать API компонентов, использовать
 // при их конструировании только необходимые параметры, а также уменьшает вероятность циклической зависимости.
 type Config struct {
-	Logger  LoggerConf
-	Storage StorageConf
-	Server  HTTPConf
+	Logger     LoggerConf
+	Storage    StorageConf
+	HTTPserver HTTPConf
+	GRPCserver GRPCConf
 }
 
 type LoggerConf struct {
@@ -21,6 +22,11 @@ type LoggerConf struct {
 }
 
 type HTTPConf struct {
+	Host string
+	Port string
+}
+
+type GRPCConf struct {
 	Host string
 	Port string
 }
@@ -35,7 +41,7 @@ type DBConf struct {
 	Password string
 	Host     string
 	Port     uint64
-	DBName   string
+	NameDb   string
 }
 
 func NewConfig(path string) (Config, error) {

@@ -43,11 +43,12 @@ func (s *Server) Start(ctx context.Context) error {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
+	s.logger.Info("start http server")
 	err := s.server.ListenAndServe()
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return errors.Wrap(err, "start server error")
 	}
-
+	s.logger.Info("stop http server")
 	<-ctx.Done()
 	return nil
 }

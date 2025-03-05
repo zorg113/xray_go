@@ -6,12 +6,14 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
 	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/app"
 	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/config"
 	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/logger"
+	"github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/server/grpc"
 	internalhttp "github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/server/http"
 	memorystorage "github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/zorg113/xray_go/hw12_13_14_15_calendar/internal/storage/sql"
@@ -47,17 +49,25 @@ func main() {
 		if err != nil {
 			log.Fatalf("can't start logger: %v", err)
 		}
+		logg.Info("set database storage")
 	}
 
 	if config.Storage.Type == "memory" {
 		storage = memorystorage.New()
+		logg.Info("set memory storage")
 	}
 
 	calendar := app.New(logg, storage)
+	grpc_server, err := grpc.NewServer(logg, calendar, config.GRPCserver.Host, config.GRPCserver.Port)
+	if err != nil {
+		logg.Error(" failed to create grpc server: " + err.Error())
+		return
+	}
+	defer grpc_server.Stop()
 
 	server := internalhttp.NewServer(
-		config.Server.Host,
-		config.Server.Port,
+		config.HTTPserver.Host,
+		config.HTTPserver.Port,
 		*logg, calendar)
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
@@ -65,10 +75,18 @@ func main() {
 	defer cancel()
 
 	go func() {
-		<-ctx.Done()
+		signals := make(chan os.Signal, 1)
+		signal.Notify(signals)
+		<-signals
+		signal.Stop(signals)
+		cancel()
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 		defer cancel()
+
+		if err := grpc_server.Stop(); err != nil {
+			logg.Error("failed to gracefully stop grpc server: " + err.Error())
+		}
 
 		if err := server.Stop(ctx); err != nil {
 			logg.Error("failed to stop http server: " + err.Error())
@@ -76,10 +94,22 @@ func main() {
 	}()
 
 	logg.Info("calendar is running...")
-
-	if err := server.Start(ctx); err != nil {
-		logg.Error("failed to start http server: " + err.Error())
-		cancel()
-		os.Exit(1) //nolint:gocritic
-	}
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if err := grpc_server.Start(); err != nil {
+			logg.Error("failed to start grpc server: " + err.Error())
+			cancel()
+		}
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if err := server.Start(ctx); err != nil {
+			logg.Error("failed to start http server: " + err.Error())
+			cancel()
+		}
+	}()
+	wg.Wait()
 }
