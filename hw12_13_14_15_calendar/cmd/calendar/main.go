@@ -58,12 +58,12 @@ func main() {
 	}
 
 	calendar := app.New(logg, storage)
-	grpc_server, err := grpc.NewServer(logg, calendar, config.GRPCserver.Host, config.GRPCserver.Port)
+	grpcServer, err := grpc.NewServer(logg, calendar, config.GRPCserver.Host, config.GRPCserver.Port)
 	if err != nil {
 		logg.Error(" failed to create grpc server: " + err.Error())
 		return
 	}
-	defer grpc_server.Stop()
+	defer grpcServer.Stop()
 
 	server := internalhttp.NewServer(
 		config.HTTPserver.Host,
@@ -84,7 +84,7 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 		defer cancel()
 
-		if err := grpc_server.Stop(); err != nil {
+		if err := grpcServer.Stop(); err != nil {
 			logg.Error("failed to gracefully stop grpc server: " + err.Error())
 		}
 
@@ -98,7 +98,7 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		if err := grpc_server.Start(); err != nil {
+		if err := grpcServer.Start(); err != nil {
 			logg.Error("failed to start grpc server: " + err.Error())
 			cancel()
 		}
