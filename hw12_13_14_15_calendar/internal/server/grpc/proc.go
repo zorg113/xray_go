@@ -76,7 +76,7 @@ func convertToProtoBufEvent(e storage.Event) (*cnd_pb.Event, error) {
 		StartDate:   &timestamppb.Timestamp{Seconds: int64(e.StartDate.Second())},
 		EndDate:     &timestamppb.Timestamp{Seconds: int64(e.EndDate.Second())},
 		Description: e.Description,
-		OwnerId:     uint64(ownerID), //nolint:gosec
+		OwnerId:     uint64(ownerID),
 		RemindIn:    e.RemindIn,
 	}, nil
 }
