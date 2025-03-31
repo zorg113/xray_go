@@ -117,7 +117,7 @@ func (s *Server) updateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write([]byte("Event created")); err != nil {
+	if _, err := w.Write([]byte("Event updated")); err != nil {
 		s.logger.Error("cannot write to reply" + err.Error())
 		return
 	}

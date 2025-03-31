@@ -28,7 +28,7 @@ func Test_ServerGRPC(t *testing.T) {
 	t.Cleanup(func() {
 		srv.Stop()
 	})
-	log, err := logger.New("INFO", "/tmp/test")
+	log, err := logger.New("INFO", "")
 	require.NoError(t, err)
 	stor := memorystorage.New()
 	app := app.New(log, stor)
@@ -55,9 +55,9 @@ func Test_ServerGRPC(t *testing.T) {
 		conn.Close()
 	})
 	require.NoError(t, err)
-
+	ctx := context.Background()
 	client := cnd_pb.NewCalendarClient(conn)
-	res, err := client.CreateEvent(context.Background(), &cnd_pb.CreateEventRequest{
+	res, err := client.CreateEvent(ctx, &cnd_pb.CreateEventRequest{
 		Event: &cnd_pb.Event{
 			Id:          1,
 			Title:       "Test event",
@@ -85,4 +85,27 @@ func Test_ServerGRPC(t *testing.T) {
 	require.Equal(t, events[0].EndDate, time.Date(1979, time.April, 8, 20, 00, 00, 00, time.UTC))
 	require.Equal(t, events[0].RemindIn, "15m")
 	require.Equal(t, events[0].OwnerID, "1")
+
+	resupd, err := client.UpdateEvent(ctx,
+		&cnd_pb.UpdateEventRequest{
+			Event: &cnd_pb.Event{
+				Id:          1,
+				Title:       "Test event",
+				Description: "This is a test event",
+				StartDate: &timestamppb.Timestamp{
+					Seconds: int64(time.Date(1979, time.April, 7, 20, 00, 00, 00, time.UTC).Unix()), //nolint:gofumpt,unconvert
+				},
+				EndDate: &timestamppb.Timestamp{
+					Seconds: int64(time.Date(1979, time.April, 8, 22, 00, 00, 00, time.UTC).Unix()), //nolint:gofumpt,unconvert
+				},
+				RemindIn: "15m",
+				OwnerId:  1,
+			},
+		})
+	require.NoError(t, err)
+	require.NotNil(t, resupd)
+	events, err = stor.GetEvents(time.Date(1979, time.April, 5, 20, 00, 00, 00, time.UTC), time.Date(1979, time.April, 9, 20, 00, 00, 00, time.UTC)) //nolint:lll,gofumpt
+	require.NoError(t, err)
+	require.Equal(t, events[0].EndDate, time.Date(1979, time.April, 8, 22, 00, 00, 00, time.UTC)) //nolint:gofumpt
+	require.NoError(t, err)
 }

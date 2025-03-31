@@ -20,6 +20,7 @@ func New(level string, path string) (*Logger, error) {
 	file, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666) //nolint:gofumpt
 	if err != nil {
 		fmt.Printf("cannot open file: %v", err)
+		file = os.Stdout
 	}
 	logger := logrus.New()
 	logger.SetLevel(lvl)
