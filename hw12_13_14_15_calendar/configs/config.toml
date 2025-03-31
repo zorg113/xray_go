@@ -1,5 +1,22 @@
-[logger]
+[Logger]
 level = "INFO"
+path ="./calendar.logger"
 
-# TODO
-# ...
+[HTTPserver]
+host = "localhost"
+port = "8080"
+
+[GRPCserver]
+host = "localhost"
+port = "50051"
+
+[Storage]
+type = "memory"
+
+[Database]
+user = "test"
+password = "test"
+host = "localhost"
+port = 5432
+nameDb = "calendar.db"
+
