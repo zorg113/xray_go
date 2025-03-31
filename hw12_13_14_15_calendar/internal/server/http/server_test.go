@@ -81,7 +81,7 @@ func Test_ServerHTTP(t *testing.T) {
 				httpMetod:   "GET",
 				url:         "/get",
 				contentType: "application/json",
-				bodyContent: `{"title": "Test event", "startDate": "2021-07-06T12:34:33.000000001Z", "endFate": "2026-07-06T12:34:33.000000001Z"}`,                                                                           //nolint:lll
+				bodyContent: `{"title": "Test event", "startDate": "2021-07-06T12:34:33.000000001Z", "endDate": "2026-07-06T12:34:33.000000001Z"}`,                                                                           //nolint:lll
 				response:    "[{\"ID\":0,\"Title\":\"Test event\",\"startDate\":\"2025-07-06T12:34:33.000000001Z\",\"endDate\":\"2025-07-06T15:34:33.000000001Z\",\"Description\":\"\",\"OwnerID\":\"\",\"RemindIn\":\"\"}]", //nolint:lll
 			},
 		},
